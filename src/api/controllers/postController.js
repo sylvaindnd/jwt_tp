@@ -16,8 +16,18 @@ exports.listAllPosts = (req, res) => {
 }
 
 exports.createAPost = (req, res) => {
-    let newPost = new Post(req.body);
+    const token = req.headers.authorization;
+    const role = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()).role;
 
+    console.log(role)
+    
+    if(role !== 0){
+        res.status(403);
+        res.json({ message: "Vous ne pouvez pas effectuer cette action en tant qu'inivté" });
+        return false;
+    }
+
+    let newPost = new Post(req.body);
 
     let randomTextPromise = textApiProvider.getRandomText();
     
