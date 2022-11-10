@@ -17,10 +17,7 @@ exports.listAllPosts = (req, res) => {
 
 exports.createAPost = (req, res) => {
     const token = req.headers.authorization;
-    const role = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()).role;
-
-    console.log(role)
-    
+    const role = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()).role;    
     if(role !== 0){
         res.status(403);
         res.json({ message: "Vous ne pouvez pas effectuer cette action en tant qu'inivté" });
@@ -68,6 +65,14 @@ exports.getAPost = (req, res) => {
 }
 
 exports.updateAPost = (req, res) => {
+    const token = req.headers.authorization;
+    const role = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()).role;    
+    if(role !== 0){
+        res.status(403);
+        res.json({ message: "Vous ne pouvez pas effectuer cette action en tant qu'inivté" });
+        return false;
+    }
+
     Post.findByIdAndUpdate(req.params.post_id, req.body, { new: true }, (error, post) => {
         if (error) {
             res.status(401);
@@ -83,6 +88,14 @@ exports.updateAPost = (req, res) => {
 }
 
 exports.deleteApost = (req, res) => {
+    const token = req.headers.authorization;
+    const role = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()).role;    
+    if(role !== 0){
+        res.status(403);
+        res.json({ message: "Vous ne pouvez pas effectuer cette action en tant qu'inivté" });
+        return false;
+    }
+    
     Post.findByIdAndRemove(req.params.post_id, (error) => {
         if (error) {
             res.status(401);
