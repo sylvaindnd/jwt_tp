@@ -1,8 +1,15 @@
 const User = require('../models/userModel');
 const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt');
 
 exports.userRegister = (req, res) => {
-    let newUser = new User(req.body);
+    const body = req.body;
+
+    let newUser = new User({
+        email: body.email,
+        role: body.role,
+        password: bcrypt.hashSync(body.password, 10)
+    });
 
     newUser.save((error, user) => {
         if (error) {
@@ -30,12 +37,13 @@ exports.loginRegister = (req, res) => {
         }
         else {
             // User found
-            if (user.email == req.body.email && user.password == req.body.password) {
+            const hash = bcrypt.hashSync(req.body.password, 10);
+            if (user.email == req.body.email && bcrypt.compareSync(req.body.password, hash)) {
                 // Password correct
                 let userData = {
                     id: user._id,
                     email: user.email,
-                    role: "admin"
+                    role: user.role
                 }
                 jwt.sign(userData, process.env.JWT_KEY, { expiresIn: "30 days" }, (error, token) => {
                     if(error) {
