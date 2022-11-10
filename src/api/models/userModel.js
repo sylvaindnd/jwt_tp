@@ -10,6 +10,11 @@ let userSchema = new Schema({
     password: {
         type: String,
         required: true
+    },
+    role: {
+        type: Number,
+        default: 1, // 0 = admin, 1 = user
+        required: true
     }
 });
 
