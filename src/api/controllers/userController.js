@@ -19,7 +19,7 @@ exports.userRegister = (req, res) => {
         }
         else {
             res.status(201);
-            res.json({ message: `Utilisateur crée : ${user.email}` });
+            res.json({ message: `Utilisateur crée : ${user.email}`, valid: true });
         }
     })
 
@@ -29,8 +29,8 @@ exports.userRegister = (req, res) => {
 exports.loginRegister = (req, res) => {
     // Find user
     User.findOne({ email: req.body.email }, (error, user) => {
-        // If user not found
-        if (error) {
+        // If user not found 
+        if (error || !user) {
             res.status(500);
             console.log(error);
             res.json({ message: "Utilisateur non trouvé" });
@@ -38,7 +38,7 @@ exports.loginRegister = (req, res) => {
         else {
             // User found
             const hash = bcrypt.hashSync(req.body.password, 10);
-            if (user.email == req.body.email && bcrypt.compareSync(req.body.password, hash)) {
+            if (user.email === req.body.email && bcrypt.compareSync(req.body.password, hash)) {
                 // Password correct
                 let userData = {
                     id: user._id,
