@@ -37,8 +37,7 @@ exports.loginRegister = (req, res) => {
         }
         else {
             // User found
-            const hash = bcrypt.hashSync(req.body.password, 10);
-            if (user.email === req.body.email && bcrypt.compareSync(req.body.password, hash)) {
+            if (user.email === req.body.email && bcrypt.compareSync(req.body.password, user.password)) {
                 // Password correct
                 let userData = {
                     id: user._id,
